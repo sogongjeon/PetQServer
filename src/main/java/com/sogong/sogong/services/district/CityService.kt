@@ -4,5 +4,5 @@ import com.sogong.sogong.model.district.City
 import com.sogong.sogong.services.generic.BaseService
 
 interface CityService : BaseService<City> {
-
+    fun findByOrgCode(code : String) : City?
 }
