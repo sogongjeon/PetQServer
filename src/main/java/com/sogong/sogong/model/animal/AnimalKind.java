@@ -7,10 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "TBL_ANIMAL")
-public class Animal extends AuditableEntity {
+@Table(name = "TBL_ANIMAL_KIND")
+public class AnimalKind extends AuditableEntity {
     @Column
-    private String animal;
+    private String type;
 
     @Column
     private String kindCode;
@@ -19,12 +19,12 @@ public class Animal extends AuditableEntity {
     private String kindName;
 
 
-    public String getAnimal() {
-        return animal;
+    public String getType() {
+        return type;
     }
 
-    public void setAnimal(String animal) {
-        this.animal = animal;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getKindCode() {
