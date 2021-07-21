@@ -18,7 +18,7 @@ public class Gu extends AuditableEntity {
     private static final long serialVersionUID = -8783424090975857769L;
 
     @Column
-    private String orgCode;
+    private String cityCode;
 
     @Column
     private String guName;
@@ -27,12 +27,12 @@ public class Gu extends AuditableEntity {
     private String guCode;
 
 
-    public String getOrgCode() {
-        return orgCode;
+    public String getCityCode() {
+        return cityCode;
     }
 
-    public void setOrgCode(String orgCode) {
-        this.orgCode = orgCode;
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
     }
 
     public String getGuName() {

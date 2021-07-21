@@ -7,19 +7,20 @@ import com.sogong.sogong.config.PublicAbandonedConfig
 import com.sogong.sogong.controller.external.PublicAbandonedService
 import com.sogong.sogong.entity.animal.AnimalKindResponse
 import com.sogong.sogong.entity.external.GuResponse
-import com.sogong.sogong.model.animal.Animal
+import com.sogong.sogong.model.animal.AnimalKind
 import com.sogong.sogong.model.district.City
 import com.sogong.sogong.model.district.Gu
-import com.sogong.sogong.services.animal.AnimalService
+import com.sogong.sogong.services.animal.AnimalKindService
 import com.sogong.sogong.services.district.CityService
 import com.sogong.sogong.services.district.GuService
-import org.apache.tomcat.util.json.JSONParser
-import org.json.JSONObject
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -33,10 +34,11 @@ class PublicAbandonedAnimalController(
         private val publicAbandonedService: PublicAbandonedService,
         private val guService: GuService,
         private val cityService: CityService,
-        private val animalService: AnimalService,
+        private val animalKindService: AnimalKindService,
         private val publicAbandonedConfig: PublicAbandonedConfig,
         private val restTemplate: RestTemplate
 ) {
+    private val log: Logger = LoggerFactory.getLogger(PublicAbandonedAnimalController::class.java)
 
     @Value("\${public.nongchuk.dogCode}")
     private val dogCode: String? = null
@@ -74,11 +76,11 @@ class PublicAbandonedAnimalController(
         headers.contentType = MediaType.APPLICATION_JSON
 
         for (city in cities) {
-            println("city OrgName :  " + city.orgName)
+            println("city OrgName :  " + city.cityName)
             try {
                 val builder = UriComponentsBuilder.fromHttpUrl(url)
                         .queryParam("ServiceKey", publicAbandonedConfig.serviceKey)
-                        .queryParam("upr_cd", city.orgCode)
+                        .queryParam("upr_cd", city.cityCode)
                         .build(true)
                 val uri = URI(builder.toUriString())
                 val response: HttpEntity<GuResponse> = restTemplate.exchange<GuResponse>(
@@ -87,7 +89,7 @@ class PublicAbandonedAnimalController(
                         HttpEntity<String>(headers),
                         GuResponse::class.java)
                 if (response.body.response!!.body!!.items.toString() == "" || response.body.response!!.body == null) {
-                    println("no data, in " + city.orgName)
+                    println("no data, in " + city.cityName)
                     continue
                 }
                 val guItems = response.body.response!!.body!!.items!!.item
@@ -99,13 +101,13 @@ class PublicAbandonedAnimalController(
                     val guData = Gu()
                     guData.guCode = orgCd
                     guData.guName = orgdownNm
-                    guData.orgCode = uprCd
+                    guData.cityCode = uprCd
                     guService.saveOrUpdate(guData)
                 }
-                println("finish updating "+city.orgName+"Gu DATA!")
+                println("finish updating "+city.cityName+"Gu DATA!")
             } catch (e: Exception) {
                 e.printStackTrace()
-                println("failed to get "+city.orgName +"data, Exception : " +e)
+                println("failed to get "+city.cityName +"data, Exception : " +e)
             }
         }
         return true
@@ -142,14 +144,14 @@ class PublicAbandonedAnimalController(
                     println("get dog kind...")
 
                     //데이터에 이미 있는 축종코드면 pass
-                    if (animalService.findByKindCode(kindItem.kindCd!!) != null) continue
+                    if (animalKindService.findByTypeCode(kindItem.kindCd!!) != null) continue
 
-                    val animalData = Animal()
-                    animalData.animal = "DOG"
+                    val animalData = AnimalKind()
+                    animalData.type = "DOG"
                     animalData.kindCode = kindItem.kindCd
                     animalData.kindName = kindItem.KNm
 
-                    animalService.saveOrUpdate(animalData)
+                    animalKindService.saveOrUpdate(animalData)
                 }
             }
             println("finished updating DOG data!")
@@ -184,14 +186,14 @@ class PublicAbandonedAnimalController(
                     println("get cat kind...")
 
                     //데이터에 이미 있는 축종코드면 pass
-                    if (animalService.findByKindCode(kindItem.kindCd!!) != null) continue
+                    if (animalKindService.findByTypeCode(kindItem.kindCd!!) != null) continue
 
-                    val animalData = Animal()
-                    animalData.animal = "CAT"
+                    val animalData = AnimalKind()
+                    animalData.type = "CAT"
                     animalData.kindCode = kindItem.kindCd
                     animalData.kindName = kindItem.KNm
 
-                    animalService.saveOrUpdate(animalData)
+                    animalKindService.saveOrUpdate(animalData)
                 }
             }
             println("finished updating CAT data!")
@@ -245,4 +247,14 @@ class PublicAbandonedAnimalController(
 
         return true
     }
+
+    @Scheduled(cron = "\${job.updateAnimal.cron}")
+    fun updateAnimal() : Boolean {
+
+
+
+        return true;
+    }
+
+
 }

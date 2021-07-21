@@ -12,26 +12,25 @@ import javax.persistence.Table;
 public class City extends AuditableEntity {
 
     @Column
-    private String orgCode;
+    private String cityCode;
 
     @Column
-    private String orgName;
+    private String cityName;
 
 
-    public String getOrgCode() {
-        return orgCode;
+    public String getCityCode() {
+        return cityCode;
     }
 
-    public void setOrgCode(String orgCode) {
-        this.orgCode = orgCode;
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
     }
 
-    public String getOrgName() {
-        return orgName;
+    public String getCityName() {
+        return cityName;
     }
 
-    public void setOrgName(String orgName) {
-        this.orgName = orgName;
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
     }
-
 }
