@@ -6,7 +6,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sogong.sogong.config.PublicAbandonedConfig
 import com.sogong.sogong.controller.external.PublicAbandonedService
+import com.sogong.sogong.entity.ResultEntity
 import com.sogong.sogong.entity.animal.AnimalKindResponse
+import com.sogong.sogong.entity.animal.AnimalKindResponseItem
 import com.sogong.sogong.entity.external.GuResponse
 import com.sogong.sogong.model.animal.AnimalData
 import com.sogong.sogong.model.animal.AnimalKind
@@ -320,7 +322,9 @@ class PublicAbandonedAnimalController(
 
                                     var guData = guService.findByGuName(cityName, guName)
 
-//                                    if()
+                                    if(guData == null) {
+
+                                    }
 
                                     newAnimalData.guCode = guData!!.guCode
                                     newAnimalData.animalKindCode = animalKind.kindCode
@@ -365,6 +369,16 @@ class PublicAbandonedAnimalController(
 
 
         return true;
+    }
+
+    @PostMapping("/animal-kind")
+    fun testData() : ResultEntity<AnimalKindResponseItem> {
+        var response = AnimalKindResponseItem()
+
+        response.KNm = "골든 리트리버"
+        response.kindCd = "000054"
+
+        return ResultEntity(response)
     }
 
 
