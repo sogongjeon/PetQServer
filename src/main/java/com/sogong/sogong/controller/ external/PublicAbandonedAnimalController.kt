@@ -100,11 +100,11 @@ class PublicAbandonedAnimalController(
                         HttpMethod.GET,
                         HttpEntity<String>(headers),
                         GuResponse::class.java)
-                if (response.body.response!!.body!!.items.toString() == "" || response.body.response!!.body == null) {
+                if (response.body?.response!!.body!!.items.toString() == "" || response.body!!.response!!.body == null) {
                     println("no data, in " + city.cityName)
                     continue
                 }
-                val guItems = response.body.response!!.body!!.items!!.item
+                val guItems = response.body!!.response!!.body!!.items!!.item
                 for ((orgCd, orgdownNm, uprCd) in guItems!!) {
                     println("get guItem, orgCode : $orgCd, guItem.getOrgdownNm : $orgdownNm")
 
@@ -292,7 +292,7 @@ class PublicAbandonedAnimalController(
 //                            object : ParameterizedTypeReference<ResultEntity<EntityList<AdminUserResultDto>>>() {
 //
 //                            })
-                    var responseItems = response.body.response!!.body!!.items!!.item
+                    var responseItems = response.body!!.response!!.body!!.items!!.item
 
                     if (responseItems != null) {
                         for(item in responseItems) {
