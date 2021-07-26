@@ -7,4 +7,6 @@ import org.springframework.stereotype.Service
 //@Service
 interface GuService : BaseService<Gu> {
     fun findByGuCode(gu : String) : Gu?
+
+    fun findByGuName(city : String, gu : String) : Gu?
 }
