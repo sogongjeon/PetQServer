@@ -11,4 +11,8 @@ open class GuServiceImpl(private val repository : GuRepository) : BaseServiceImp
     override fun findByGuCode(gu : String) : Gu? {
         return repository.findByGuCode(gu)
     }
+
+    override fun findByGuName(city : String, gu : String): Gu? {
+        return repository.findByGuName(city, gu)
+    }
 }
