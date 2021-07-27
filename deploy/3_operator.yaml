@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petq-apiserver
+  labels:
+    app: petq-apiserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: petq-apiserver
+  template:
+    metadata:
+      labels:
+        app: petq-apiserver
+    spec:
+      containers:
+        - image: codejune/petq-apiserver:v0.1
+          name: petq-apiserver
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
+              name: petq-apiserver
+          env:
+          - name: "spring.profiles.active"
+            value: "local"
+          - name: "user.timezone"
+            value: "Asia/Seoul"
+          volumeMounts:
+          - name: petq-apiserver-volume
+            mountPath: /data
+      volumes:
+        - name: petq-apiserver-volume
+          persistentVolumeClaim:
+            claimName: petq-apiserver-pvc
+
+
+
