@@ -1,0 +1,14 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: petq-apiserver-pv
+  labels:
+    type: local
+spec:
+  storageClassName: petq-apiserver-pv
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/Users/codejune/Volumes/petq-apiserver"
