@@ -9,18 +9,24 @@ import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
+import java.util.Date;
+import java.util.TimeZone;
+
 @SpringBootApplication
 public class SogongApplication {
+
+    @PostConstruct
+    public void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+        System.out.println("현재시각 : "+new Date());
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(SogongApplication.class, args);
     }
 
-//    @Bean
-//    public Gson gson() {
-//        return new Gson();
-//    }
-//
+
     @Bean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
