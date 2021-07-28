@@ -24,6 +24,7 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -64,15 +65,9 @@ class PublicAbandonedAnimalController(
     private val savePath : String ?= null
 
 
-    @PostMapping("/")
-    fun default(): String {
-        println("dkssud")
-        return "hi"
-    }
 
     @PostMapping("/find")
     fun findAnimal(): String {
-        println("dkssud")
 //        @RequestBody findRequest: FindAbandonedRequest
         var response = publicAbandonedService.findAnimalList()
         return response.toString()
@@ -92,7 +87,7 @@ class PublicAbandonedAnimalController(
         headers.contentType = MediaType.APPLICATION_JSON
 
         for (city in cities) {
-            println("city OrgName :  " + city.cityName)
+            log.info("city OrgName :  " + city.cityName)
             try {
                 val builder = UriComponentsBuilder.fromHttpUrl(url)
                         .queryParam("ServiceKey", publicAbandonedConfig.serviceKey)
@@ -109,7 +104,7 @@ class PublicAbandonedAnimalController(
 
                     val guItems = response.body!!.response!!.body!!.items!!.item
                     for ((orgCd, orgdownNm, uprCd) in guItems!!) {
-                        println("get guItem, orgCode : $orgCd, guItem.getOrgdownNm : $orgdownNm")
+                        log.info("get guItem, orgCode : $orgCd, guItem.getOrgdownNm : $orgdownNm")
 
                         //gu 데이터에 이미 있으면 pass
                         if (guService.findByGuCode(orgCd!!) != null) continue
@@ -119,18 +114,18 @@ class PublicAbandonedAnimalController(
                         guData.cityCode = uprCd
                         guService.saveOrUpdate(guData)
                     }
-                    println("finish updating " + city.cityName + "Gu DATA!")
+                    log.info("finish updating " + city.cityName + "Gu DATA!")
                 } catch(e : RestClientException) {
-                    println("no data in ${city.cityName}, continue")
+                    log.error("no data in ${city.cityName}, continue")
                     continue;
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                println("failed to get "+city.cityName +"data, Exception : " +e)
+                log.error("failed to get "+city.cityName +"data, Exception : " +e)
                 continue;
             }
         }
-        println("finished to update GU data!")
+        log.info("finished to update GU data!")
         return true
     }
 
@@ -162,7 +157,7 @@ class PublicAbandonedAnimalController(
 
             if (kindItems != null) {
                 for (kindItem in kindItems) {
-                    println("get dog kind...")
+                    log.info("get dog kind...")
 
                     //데이터에 이미 있는 축종코드면 pass
                     if (animalKindService.findByTypeCode(kindItem.kindCd!!) != null) continue
@@ -175,11 +170,11 @@ class PublicAbandonedAnimalController(
                     animalKindService.saveOrUpdate(animalData)
                 }
             }
-            println("finished updating DOG data!")
-            println("Total DOG type data : ${kindItems!!.size}")
+            log.info("finished updating DOG data!")
+            log.info("Total DOG type data : ${kindItems!!.size}")
         } catch (e: Exception) {
             e.printStackTrace()
-            println("failed to get DOG data, Exception : $e")
+            log.info("failed to get DOG data, Exception : $e")
         }
 
         //고양이
@@ -204,7 +199,7 @@ class PublicAbandonedAnimalController(
 
             if (kindItems != null) {
                 for (kindItem in kindItems) {
-                    println("get cat kind...")
+                    log.info("get cat kind...")
 
                     //데이터에 이미 있는 축종코드면 pass
                     if (animalKindService.findByTypeCode(kindItem.kindCd!!) != null) continue
@@ -217,11 +212,11 @@ class PublicAbandonedAnimalController(
                     animalKindService.saveOrUpdate(animalData)
                 }
             }
-            println("finished updating CAT data!")
-            println("Total CAT type data : ${kindItems!!.size}")
+            log.info("finished updating CAT data!")
+            log.info("Total CAT type data : ${kindItems!!.size}")
         } catch (e: Exception) {
             e.printStackTrace()
-            println("failed to get CAT data, Exception : $e")
+            log.info("failed to get CAT data, Exception : $e")
         }
 
         //기타축종(아직 세분화가 되어있지 않아 주석처리)
@@ -246,7 +241,7 @@ class PublicAbandonedAnimalController(
 //
 //            if (kindItems != null) {
 //                for (kindItem in kindItems) {
-//                    println("get etc kind...")
+//                    log.info("get etc kind...")
 //
 //                    //데이터에 이미 있는 축종코드면 pass
 //                    if (animalService.findByKindCode(kindItem.kindCd!!) != null) continue
@@ -259,20 +254,21 @@ class PublicAbandonedAnimalController(
 //                    animalService.saveOrUpdate(animalData)
 //                }
 //            }
-//            println("finish updating ETC data!")
-//            println("Total ETC type data : ${kindItems!!.size}")
+//            log.info("finish updating ETC data!")
+//            log.info("Total ETC type data : ${kindItems!!.size}")
 //        } catch (e: Exception) {
 //            e.printStackTrace()
-//            println("failed to get ETC data, Exception : $e")
+//            log.info("failed to get ETC data, Exception : $e")
 //        }
 
         return true
     }
 
-//    @Scheduled(cron = "\${job.updateAnimal.cron}")
-    @PostMapping("/update-animal-data-test")
+    @Scheduled(cron = "\${job.updateAnimal.cron}")
     fun updateAnimal() : Boolean {
         var animalList = animalKindService.findAll();
+        log.info("# =======================")
+        log.info("Start updating animal data from nongchukbu open api")
 
         if(animalList != null) {
             for(animalKind in animalList) {
@@ -313,6 +309,7 @@ class PublicAbandonedAnimalController(
                                         //1-2. 종료 상태가 아닐시 상태값만 update
                                         animalData.processState = item.processState
                                         animalDataService.saveOrUpdate(animalData)
+                                        log.info("update additional animal data, desertionNo : ${item.desertionNo}")
                                     }
 
                                 } else {
@@ -374,29 +371,27 @@ class PublicAbandonedAnimalController(
                                     if (!file.exists()) {
                                         //디렉토리 생성 메서드
                                         file.mkdirs()
-                                        println("created directory successfully!")
                                     }
 
                                     ImageIO.write(image, extension, file)
+                                    log.info("insert new animal data, desertionNo : "+item.desertionNo)
 
                                 }
 
                             } catch(e : Exception){
                                 e.printStackTrace();
-                                println("Sorry, during update Animal Data (desertionNo : "+item.desertionNo+"), " + e );
+                                log.error("Sorry, during update Animal Data from public api,(desertionNo : "+item.desertionNo+"), " + e );
                             }
 
                         }
                     }
 
                 } catch(e : RestClientException) {
-                    println("no data in "+animalKind.kindName);
+                    log.error("no data, "+animalKind.kindName);
                     continue;
                 }
             }
         }
-
-
         return true;
     }
 
