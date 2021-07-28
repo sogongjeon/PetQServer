@@ -11,5 +11,8 @@ open class CityServiceImpl(private val repository: CityRepository) : BaseService
         return repository.findByOrgCode(code)
     }
 
+    override fun findByCityName(name: String): City? {
+        return repository.findByCityName(name)
+    }
 
 }

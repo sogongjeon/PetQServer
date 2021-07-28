@@ -95,33 +95,38 @@ class PublicAbandonedAnimalController(
                         .queryParam("upr_cd", city.cityCode)
                         .build(true)
                 val uri = URI(builder.toUriString())
-                val response: HttpEntity<GuResponse> = restTemplate.exchange<GuResponse>(
-                        uri,
-                        HttpMethod.GET,
-                        HttpEntity<String>(headers),
-                        GuResponse::class.java)
-                if (response.body?.response!!.body!!.items.toString() == "" || response.body!!.response!!.body == null) {
-                    println("no data, in " + city.cityName)
-                    continue
-                }
-                val guItems = response.body!!.response!!.body!!.items!!.item
-                for ((orgCd, orgdownNm, uprCd) in guItems!!) {
-                    println("get guItem, orgCode : $orgCd, guItem.getOrgdownNm : $orgdownNm")
+                try {
+                    val response: HttpEntity<GuResponse> = restTemplate.exchange<GuResponse>(
+                            uri,
+                            HttpMethod.GET,
+                            HttpEntity<String>(headers),
+                            GuResponse::class.java)
 
-                    //gu 데이터에 이미 있으면 pass
-                    if (guService.findByGuCode(orgCd!!) != null) continue
-                    val guData = Gu()
-                    guData.guCode = orgCd
-                    guData.guName = orgdownNm
-                    guData.cityCode = uprCd
-                    guService.saveOrUpdate(guData)
+
+                    val guItems = response.body!!.response!!.body!!.items!!.item
+                    for ((orgCd, orgdownNm, uprCd) in guItems!!) {
+                        println("get guItem, orgCode : $orgCd, guItem.getOrgdownNm : $orgdownNm")
+
+                        //gu 데이터에 이미 있으면 pass
+                        if (guService.findByGuCode(orgCd!!) != null) continue
+                        val guData = Gu()
+                        guData.guCode = orgCd
+                        guData.guName = orgdownNm
+                        guData.cityCode = uprCd
+                        guService.saveOrUpdate(guData)
+                    }
+                    println("finish updating " + city.cityName + "Gu DATA!")
+                } catch(e : RestClientException) {
+                    println("no data in ${city.cityName}, continue")
+                    continue;
                 }
-                println("finish updating "+city.cityName+"Gu DATA!")
             } catch (e: Exception) {
                 e.printStackTrace()
                 println("failed to get "+city.cityName +"data, Exception : " +e)
+                continue;
             }
         }
+        println("finished to update GU data!")
         return true
     }
 
@@ -288,10 +293,6 @@ class PublicAbandonedAnimalController(
                             FindAbandonedResponse::class.java
                     )
 
-//                    val response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, request,
-//                            object : ParameterizedTypeReference<ResultEntity<EntityList<AdminUserResultDto>>>() {
-//
-//                            })
                     var responseItems = response.body!!.response!!.body!!.items!!.item
 
                     if (responseItems != null) {
@@ -322,8 +323,16 @@ class PublicAbandonedAnimalController(
 
                                     var guData = guService.findByGuName(cityName, guName)
 
+                                    //기존에 없던 구 데이터라면 추가해주기
                                     if(guData == null) {
+                                        var newGu = Gu()
+                                        newGu.cityCode = cityService.findByCityName(cityName)!!.cityCode
+                                        newGu.guCode = guService.getLastGuCode() + 1
+                                        newGu.guName = guName
 
+                                        guService.saveOrUpdate(newGu)
+
+                                        guData = newGu
                                     }
 
                                     newAnimalData.guCode = guData!!.guCode
@@ -350,6 +359,8 @@ class PublicAbandonedAnimalController(
                                     newAnimalData.managerTel = item.officetel
 
                                     animalDataService.saveOrUpdate(newAnimalData)
+
+                                    
                                 }
 
                             } catch(e : Exception){
