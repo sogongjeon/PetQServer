@@ -1,11 +1,10 @@
-package com.sogong.sogong.controller.` external`
+package com.sogong.sogong.controller.external
 
 //import com.animal.animal.services.external.PublicAbandonedService
 import com.animal.animal.entity.external.FindAbandonedResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sogong.sogong.config.PublicAbandonedConfig
-import com.sogong.sogong.controller.external.PublicAbandonedService
 import com.sogong.sogong.entity.ResultEntity
 import com.sogong.sogong.entity.animal.AnimalKindResponse
 import com.sogong.sogong.entity.animal.AnimalKindResponseItem
@@ -31,11 +30,13 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
+import java.awt.image.BufferedImage
+import java.io.File
 import java.net.URI
-import java.text.SimpleDateFormat
+import java.net.URL
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.imageio.ImageIO
 
 @RestController
 @RequestMapping("/v1/external/public/abandoned")
@@ -58,6 +59,9 @@ class PublicAbandonedAnimalController(
 
     @Value("\${public.nongchuk.etcCode}")
     private val etcCode: String? = null
+
+    @Value("\${animalImage.savePath}")
+    private val savePath : String ?= null
 
 
     @PostMapping("/")
@@ -315,11 +319,10 @@ class PublicAbandonedAnimalController(
                                     //2. 기존 DB에 없던 동물일 경우
                                     var newAnimalData = AnimalData()
 
-                                    var orgNm = item.orgNm!!
+                                    var address = item.careAddr!!
 
-                                    var idx = orgNm.indexOf(" ")
-                                    var cityName = orgNm.substring(0, idx)
-                                    var guName = orgNm.substring(idx+1)
+                                    var cityName = address.split(" ")[0]
+                                    var guName = address.split(" ")[1]
 
                                     var guData = guService.findByGuName(cityName, guName)
 
@@ -327,7 +330,7 @@ class PublicAbandonedAnimalController(
                                     if(guData == null) {
                                         var newGu = Gu()
                                         newGu.cityCode = cityService.findByCityName(cityName)!!.cityCode
-                                        newGu.guCode = guService.getLastGuCode() + 1
+                                        newGu.guCode = (Integer.parseInt(guService.getLastGuCode()) + 1).toString()
                                         newGu.guName = guName
 
                                         guService.saveOrUpdate(newGu)
@@ -360,7 +363,22 @@ class PublicAbandonedAnimalController(
 
                                     animalDataService.saveOrUpdate(newAnimalData)
 
-                                    
+                                    var IMAGE_URL = item.popfile
+                                    var imgUrl = URL(IMAGE_URL)
+                                    val extension = IMAGE_URL!!.substring(IMAGE_URL.lastIndexOf('.') + 1)
+
+
+                                    val image: BufferedImage = ImageIO.read(imgUrl)
+                                    val file = File( savePath + item.desertionNo + ".jpg")
+
+                                    if (!file.exists()) {
+                                        //디렉토리 생성 메서드
+                                        file.mkdirs()
+                                        println("created directory successfully!")
+                                    }
+
+                                    ImageIO.write(image, extension, file)
+
                                 }
 
                             } catch(e : Exception){
@@ -372,7 +390,7 @@ class PublicAbandonedAnimalController(
                     }
 
                 } catch(e : RestClientException) {
-                    println("JSON parse error! during parsing"+animalKind.kindName);
+                    println("no data in "+animalKind.kindName);
                     continue;
                 }
             }
