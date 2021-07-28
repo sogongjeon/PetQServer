@@ -22,6 +22,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
@@ -51,6 +52,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SpringBootTest
+@ActiveProfiles("local")
 class SogongApplicationTests {
     @Autowired
     CityService cityService;
@@ -207,23 +209,30 @@ class SogongApplicationTests {
 
     @Test
     void orgNmTest() {
-        String orgNm = "대구광역시 중구";
+        String orgNm = "제주특별자치도 제주시 첨단동길 184-14 (용강동)";
 
-        int idx = orgNm.indexOf(" ");
+        String word1 = orgNm.split("\\s")[0];
+        String word2 = orgNm.split("\\s")[1];
 
-        // @ 앞부분을 추출
-        // substring은 첫번째 지정한 인덱스는 포함하지 않는다.
-        // 아래의 경우는 첫번째 문자열인 a 부터 추출된다.
-        String city = orgNm.substring(0, idx);
-
-        // 뒷부분을 추출
-        // 아래 substring은 @ 바로 뒷부분인 n부터 추출된다.
-        String gu = orgNm.substring(idx+1);
-
-        Gu guData = guService.findByGuName(city, gu);
+        System.out.println("word1 : "+word1);
+        System.out.println("word2 L "+word2 );
 
 
-        System.out.println("시 : "+city+",구 : "+gu+",구 코드 : "+guData.getGuCode()+"지역 코드 : "+guData.getCityCode());
+//        int idx = orgNm.indexOf(" ");
+//
+//        // @ 앞부분을 추출
+//        // substring은 첫번째 지정한 인덱스는 포함하지 않는다.
+//        // 아래의 경우는 첫번째 문자열인 a 부터 추출된다.
+//        String city = orgNm.substring(0, idx);
+//
+//        // 뒷부분을 추출
+//        // 아래 substring은 @ 바로 뒷부분인 n부터 추출된다.
+//        String gu = orgNm.substring(idx+1);
+//
+//        Gu guData = guService.findByGuName(city, gu);
+//
+//
+//        System.out.println("시 : "+city+",구 : "+gu+",구 코드 : "+guData.getGuCode()+"지역 코드 : "+guData.getCityCode());
     }
 
     @Test
