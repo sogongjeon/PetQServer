@@ -13,4 +13,7 @@ interface GuRepository : JpaRepository<Gu, Long> {
 
     @Query("select g from Gu g join City c on g.cityCode = c.cityCode where g.guName = ?2 and c.cityName = ?1")
     fun findByGuName(city : String, gu : String) : Gu?
+
+    @Query("select MAX(g.guCode) from Gu g")
+    fun getLastGuCode() : String
 }
