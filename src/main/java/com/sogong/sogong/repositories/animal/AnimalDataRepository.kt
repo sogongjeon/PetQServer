@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface AnimalDataRepository : JpaRepository<AnimalData, Long> {
-    @Query("select ad from AnimalData ad where ad.desertionNo = ?1 and ad.processState like '%종료%'")
+    @Query("select ad from AnimalData ad where ad.desertionNo = ?1")
     fun findByDesertionNo(desertionNo : String) : AnimalData?
 }
