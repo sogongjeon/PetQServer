@@ -10,9 +10,9 @@ class AuthController(
 ) {
 
     @GetMapping("/oauth")
-    fun getAuthCode(@RequestParam("code") authorizationCode : String) : String {
-//        authenticationService.getAccessToken(authorizationCode)
-//        REST API KEY 532884bfb092b23c4e1eeb0c88a5124a
+    fun getAuthCode(@RequestParam("code") code : String) : String {
+//      (1) 카카오로그인
+        var kakaoAuth = authenticationService.kakaoAuthorization(code)
         return "g"
     }
 
