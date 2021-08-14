@@ -1,5 +1,6 @@
 package com.sogong.sogong.repositories.district
 
+import com.sogong.sogong.entity.district.GuInfo
 import com.sogong.sogong.model.district.Gu
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -16,4 +17,10 @@ interface GuRepository : JpaRepository<Gu, Long> {
 
     @Query("select MAX(g.guCode) from Gu g")
     fun getLastGuCode() : String
+
+    @Query("select new com.sogong.sogong.entity.district.GuInfo (" +
+            "c.cityName, "+
+            "g.guName"+
+            ") from Gu g inner join City c on c.cityCode = g.cityCode where g.guCode = ?1")
+    fun getGuInfo(guCode : String) : GuInfo?
 }

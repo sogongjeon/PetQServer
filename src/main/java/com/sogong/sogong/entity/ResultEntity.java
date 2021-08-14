@@ -1,5 +1,7 @@
 package com.sogong.sogong.entity;
 
+import com.sogong.sogong.type.ApiResult;
+
 import java.io.Serializable;
 
 public class ResultEntity<T> implements Serializable {
@@ -27,10 +29,21 @@ public class ResultEntity<T> implements Serializable {
         this.message = message;
     }
 
-//    public ResultEntity(ApiResult apiResult) {
-//        this.code = apiResult.getCode();
-//        this.message = apiResult.getMessage();
-//    }
+    public ResultEntity(ApiResult apiResult) {
+        this.code = apiResult.getCode();
+        this.message = apiResult.getMessage();
+    }
+
+    public ResultEntity(ApiResult apiResult, String message) {
+        this.code = apiResult.getCode();
+        this.message = apiResult.getMessage();
+    }
+
+    public ResultEntity(ApiResult apiResult, String message, String data) {
+        this.code = apiResult.getCode();
+        this.message = apiResult.getMessage();
+        this.data = (T) data;
+    }
 
     public String getCode() {
         return code;

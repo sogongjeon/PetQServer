@@ -1,5 +1,6 @@
 package com.sogong.sogong.services.district
 
+import com.sogong.sogong.entity.district.GuInfo
 import com.sogong.sogong.model.district.Gu
 import com.sogong.sogong.repositories.district.GuRepository
 import com.sogong.sogong.services.generic.BaseServiceImpl
@@ -18,5 +19,9 @@ open class GuServiceImpl(private val repository : GuRepository) : BaseServiceImp
 
     override fun getLastGuCode() : String {
         return repository.getLastGuCode()
+    }
+
+    override fun getGuInfo(guCode: String): GuInfo? {
+        return repository.getGuInfo(guCode)
     }
 }

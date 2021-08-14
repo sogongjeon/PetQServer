@@ -1,6 +1,7 @@
 package com.sogong.sogong.model.customer;
 
 import com.sogong.sogong.model.generic.AuditableEntity;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,26 +14,32 @@ public class LostPet extends AuditableEntity {
 
     //회원 아이디
     @Column
+    @NotNull
     private Long customerId;
 
     //동물 품종
     @Column
+    @NotNull
     private Long animalKindId;
 
     //실종동물이미지 경로
     @Column
+    @NotNull
     private String imgPath;
 
     //실종위치 구코드
     @Column
+    @NotNull
     private String guCode;
 
     //보호자 전화번호
     @Column
+    @NotNull
     private String phoneNumber;
 
     //실종일자
     @Column
+    @NotNull
     private LocalDateTime lostDay;
 
     //동물 특징
