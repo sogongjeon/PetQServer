@@ -5,4 +5,6 @@ import com.sogong.sogong.services.generic.BaseService
 
 interface AnimalKindService : BaseService<AnimalKind> {
     fun findByTypeCode(code : String) : AnimalKind?
+
+    fun findByType(type : String?) : List<AnimalKind>?
 }

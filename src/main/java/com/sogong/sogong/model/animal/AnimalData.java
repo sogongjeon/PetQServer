@@ -1,16 +1,20 @@
 package com.sogong.sogong.model.animal;
 
 import com.sogong.sogong.model.generic.AuditableEntity;
+import com.sogong.sogong.type.animal.ProtectType;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name="TBL_ANIMAL_DATA")
 public class AnimalData extends AuditableEntity {
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(length = 20)
+    private ProtectType protectType;
+
     @Column
     private String guCode; //구 코드
 
@@ -77,6 +81,14 @@ public class AnimalData extends AuditableEntity {
     @Column
     private String managerTel; //담당자 전화번호(officetel)
 
+
+    public ProtectType getProtectType() {
+        return protectType;
+    }
+
+    public void setProtectType(ProtectType protectType) {
+        this.protectType = protectType;
+    }
 
     public String getGuCode() {
         return guCode;

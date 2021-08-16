@@ -58,7 +58,7 @@ class CustomerController(
     }
 
     // 실종동물 삭제 API
-    @DeleteMapping("/lostpet/register/{id}")
+    @DeleteMapping("/lostpet/delete/{id}")
     fun deleteLostPet(@PathVariable id: Long) : ResultEntity<Boolean> {
         //존재하는지 확인 후 삭제, 없으면 false
         val lostPet = lostPetService.findById(id).orElse(null) ?: return ResultEntity(ApiResult.NOT_FOUND)

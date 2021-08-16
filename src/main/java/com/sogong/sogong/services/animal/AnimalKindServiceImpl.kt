@@ -10,4 +10,8 @@ open class AnimalKindServiceImpl(private val repository : AnimalKindRepository) 
     override fun findByTypeCode(code: String): AnimalKind? {
         return repository.findByTypeCode(code)
     }
+
+    override fun findByType(type: String?): List<AnimalKind>? {
+        return repository.listByType(type)
+    }
 }

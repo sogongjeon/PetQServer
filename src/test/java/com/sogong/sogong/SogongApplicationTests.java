@@ -14,6 +14,7 @@ import com.sogong.sogong.model.district.Gu;
 import com.sogong.sogong.services.animal.AnimalKindService;
 import com.sogong.sogong.services.district.CityService;
 import com.sogong.sogong.services.district.GuService;
+import com.sogong.sogong.type.animal.AnimalKindType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -261,5 +262,13 @@ class SogongApplicationTests {
         System.out.println("a");
 
 
+    }
+
+    @Test
+    void enumTest() {
+        String name = "DOG";
+
+        AnimalKindType a = AnimalKindType.valueOf(name);
+        System.out.println(a.getKey());
     }
 }

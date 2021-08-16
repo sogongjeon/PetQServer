@@ -9,6 +9,7 @@ import com.sogong.sogong.services.animal.AnimalDataService
 import com.sogong.sogong.services.animal.AnimalKindService
 import com.sogong.sogong.services.district.CityService
 import com.sogong.sogong.services.district.GuService
+import com.sogong.sogong.type.animal.ProtectType
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -136,6 +137,7 @@ class PublicUpdateAnimalJob (
                                     newAnimalData.careAddress = item.careAddr
                                     newAnimalData.managerName = item.chargeNm
                                     newAnimalData.managerTel = item.officetel
+                                    newAnimalData.protectType = ProtectType.SHELTER
 
                                     animalDataService.saveOrUpdate(newAnimalData)
 
