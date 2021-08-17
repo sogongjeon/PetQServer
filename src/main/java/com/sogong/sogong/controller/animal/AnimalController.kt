@@ -3,6 +3,7 @@ package com.sogong.sogong.controller.animal
 import com.sogong.sogong.entity.EntityList
 import com.sogong.sogong.entity.ResultEntity
 import com.sogong.sogong.entity.animal.AnimalKindDetailDto
+import com.sogong.sogong.entity.animal.AnimalSearchCriteria
 import com.sogong.sogong.entity.animal.RegisterAnimalRequest
 import com.sogong.sogong.entity.common.Criteria
 import com.sogong.sogong.model.animal.AnimalData
@@ -38,6 +39,21 @@ class AnimalController(
 
         val animalResult = EntityList<AnimalData>()
         animalResult.totalCount = animalPage.totalElements
+        animalResult.elements = animalPage
+                .toList()
+
+        return ResultEntity(animalResult)
+    }
+
+    @GetMapping("/list2")
+    fun animalListVer2(@ModelAttribute criteria : AnimalSearchCriteria) : ResultEntity<EntityList<AnimalData>> {
+
+//        val animalCriteria = AnimalSearchCriteria()
+
+        var animalPage = animalDataService.listByAnimalCriteria(criteria)
+
+        val animalResult = EntityList<AnimalData>()
+        animalResult.totalCount = animalPage!!.totalElements
         animalResult.elements = animalPage
                 .toList()
 

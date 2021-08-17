@@ -11,8 +11,9 @@ import java.time.LocalDateTime;
 @Table(name="TBL_ANIMAL_DATA")
 public class AnimalData extends AuditableEntity {
 
-    @Enumerated(value = EnumType.STRING)
+
     @Column(length = 20)
+    @Enumerated(value = EnumType.STRING)
     private ProtectType protectType;
 
     @Column

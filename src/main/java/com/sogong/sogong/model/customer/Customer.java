@@ -21,17 +21,29 @@ public class Customer extends AuditableEntity {
     private String nickname;
 
     @Column
-    private Long preferredKindId;
-
-    @Column
     private String guCode;
 
-    @Column
-    private Boolean enabled;
+    @Column(length = 1)
+    private Boolean enabled = true;
 
     //회원 프로필 저장경로
     @Column
     private String profilePath;
+
+    @Column
+    private String preferredKindCode1;
+
+    @Column
+    private String preferredKindCode2;
+
+    @Column
+    private String preferredKindCode3;
+
+    @Column
+    private String preferredKindCode4;
+
+    @Column
+    private String preferredKindCode5;
 
 
     public String getEmail() {
@@ -58,14 +70,6 @@ public class Customer extends AuditableEntity {
         this.nickname = nickname;
     }
 
-    public Long getPreferredKindId() {
-        return preferredKindId;
-    }
-
-    public void setPreferredKindId(Long preferredKindId) {
-        this.preferredKindId = preferredKindId;
-    }
-
     public String getGuCode() {
         return guCode;
     }
@@ -88,5 +92,45 @@ public class Customer extends AuditableEntity {
 
     public void setProfilePath(String profilePath) {
         this.profilePath = profilePath;
+    }
+
+    public String getPreferredKindCode1() {
+        return preferredKindCode1;
+    }
+
+    public void setPreferredKindCode1(String preferredKindCode1) {
+        this.preferredKindCode1 = preferredKindCode1;
+    }
+
+    public String getPreferredKindCode2() {
+        return preferredKindCode2;
+    }
+
+    public void setPreferredKindCode2(String preferredKindCode2) {
+        this.preferredKindCode2 = preferredKindCode2;
+    }
+
+    public String getPreferredKindCode3() {
+        return preferredKindCode3;
+    }
+
+    public void setPreferredKindCode3(String preferredKindCode3) {
+        this.preferredKindCode3 = preferredKindCode3;
+    }
+
+    public String getPreferredKindCode4() {
+        return preferredKindCode4;
+    }
+
+    public void setPreferredKindCode4(String preferredKindCode4) {
+        this.preferredKindCode4 = preferredKindCode4;
+    }
+
+    public String getPreferredKindCode5() {
+        return preferredKindCode5;
+    }
+
+    public void setPreferredKindCode5(String preferredKindCode5) {
+        this.preferredKindCode5 = preferredKindCode5;
     }
 }

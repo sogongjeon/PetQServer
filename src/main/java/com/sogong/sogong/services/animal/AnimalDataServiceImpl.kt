@@ -1,5 +1,6 @@
 package com.sogong.sogong.services.animal
 
+import com.sogong.sogong.entity.animal.AnimalSearchCriteria
 import com.sogong.sogong.entity.common.Criteria
 import com.sogong.sogong.model.animal.AnimalData
 import com.sogong.sogong.repositories.animal.AnimalDataRepository
@@ -15,5 +16,9 @@ open class AnimalDataServiceImpl(private val repository: AnimalDataRepository) :
 
     override fun listByCriteria(criteria : Criteria) : Page<AnimalData> {
         return repository.listByCriteria(criteria)
+    }
+
+    override fun listByAnimalCriteria(criteria: AnimalSearchCriteria): Page<AnimalData>? {
+        return repository.listByAnimalCriteria(criteria)
     }
 }
