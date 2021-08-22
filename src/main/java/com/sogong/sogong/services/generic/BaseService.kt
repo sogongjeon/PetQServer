@@ -37,6 +37,9 @@ interface BaseService<T : BaseEntity> {
     @Transactional(readOnly = true)
     fun count(): Long?
 
+    @Transactional
+    fun saveOrUpdateAndFlush(entity: T)
+
     fun flush()
 }
 

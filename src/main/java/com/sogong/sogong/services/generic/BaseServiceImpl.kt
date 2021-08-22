@@ -32,6 +32,17 @@ open class BaseServiceImpl<T : BaseEntity>(private val repository: JpaRepository
     }
 
     @Transactional
+    override fun saveOrUpdateAndFlush(entity: T) {
+        if (entity.isNew) {
+            create(entity)
+            repository.saveAndFlush(entity)
+        } else {
+            update(entity)
+            repository.saveAndFlush(entity)
+        }
+    }
+
+    @Transactional
     override fun create(iterable: Iterable<T>) {
         repository.saveAll(iterable)
     }

@@ -1,6 +1,8 @@
 package com.sogong.sogong.entity.common;
 
 
+import com.sogong.sogong.entity.common.CriteriaOrderBy;
+
 public class Criteria {
     private int page = 0;
     private int size = 20;

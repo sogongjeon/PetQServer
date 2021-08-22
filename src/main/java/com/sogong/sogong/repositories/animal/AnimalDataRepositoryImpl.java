@@ -108,14 +108,14 @@ public class AnimalDataRepositoryImpl implements AnimalDataRepositoryCustom{
 
         //축종 필터 - List로 관리
         if (criteria.getKind() != null && criteria.getKind().size() > 0) {
-            String type = " and ak.type in :type";
+            String type = " and ak.type in :kind";
             countBuilderWhere.append(type);
             objectBuilderWhere.append(type);
         }
 
         //품종 필터 - List로 관리
         if (criteria.getKindDetail() != null && criteria.getKindDetail().size() > 0) {
-            String type = " and ad.animalKindCode in :animalKindCode";
+            String type = " and ad.animalKindCode in :kindDetail";
             countBuilderWhere.append(type);
             objectBuilderWhere.append(type);
         }

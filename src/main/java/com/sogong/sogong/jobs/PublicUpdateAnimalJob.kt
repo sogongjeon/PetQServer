@@ -126,7 +126,7 @@ class PublicUpdateAnimalJob (
                                     newAnimalData.weight = item.weight
                                     newAnimalData.noticeNo = item.noticeNo
                                     newAnimalData.noticeStart = LocalDate.parse(item.noticeSdt, DateTimeFormatter.ofPattern("yyyyMMdd")).atTime(0,0,0)
-                                    newAnimalData.noticeEnd= LocalDate.parse(item.noticeSdt, DateTimeFormatter.ofPattern("yyyyMMdd")).atTime(0,0,0)
+                                    newAnimalData.noticeEnd= LocalDate.parse(item.noticeEdt, DateTimeFormatter.ofPattern("yyyyMMdd")).atTime(0,0,0)
                                     newAnimalData.imageUrl = item.popfile
                                     newAnimalData.processState = item.processState
                                     newAnimalData.sex = item.sexCd
@@ -147,7 +147,7 @@ class PublicUpdateAnimalJob (
 
 
                                     val image: BufferedImage = ImageIO.read(imgUrl)
-                                    val file = File( savePath + item.desertionNo + ".jpg")
+                                    val file = File( savePath + newAnimalData.id + ".jpg")
 
                                     if (!file.exists()) {
                                         //디렉토리 생성 메서드
@@ -155,7 +155,7 @@ class PublicUpdateAnimalJob (
                                     }
 
                                     ImageIO.write(image, extension, file)
-                                    log.info("insert new animal data, desertionNo : "+item.desertionNo)
+                                    log.info("insert new animal data, id : "+newAnimalData.id)
 
                                 }
 

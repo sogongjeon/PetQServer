@@ -8,9 +8,11 @@ import com.sogong.sogong.entity.animal.AnimalKindResponseItem;
 import com.sogong.sogong.entity.animal.AnimalKindResponseItems;
 import com.sogong.sogong.entity.external.GuResponse;
 import com.sogong.sogong.entity.external.GuResponseItem;
+import com.sogong.sogong.model.animal.AnimalData;
 import com.sogong.sogong.model.animal.AnimalKind;
 import com.sogong.sogong.model.district.City;
 import com.sogong.sogong.model.district.Gu;
+import com.sogong.sogong.services.animal.AnimalDataService;
 import com.sogong.sogong.services.animal.AnimalKindService;
 import com.sogong.sogong.services.district.CityService;
 import com.sogong.sogong.services.district.GuService;
@@ -46,11 +48,16 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.time.temporal.ChronoUnit.DAYS;
+
+//import static java.util.concurrent.TimeUnit.DAYS;
 
 @SpringBootTest
 @ActiveProfiles("local")
@@ -63,6 +70,9 @@ class SogongApplicationTests {
 
     @Autowired
     AnimalKindService animalKindService;
+
+    @Autowired
+    AnimalDataService animalDataService;
 
     @Autowired
     RestTemplate restTemplate;
@@ -270,5 +280,23 @@ class SogongApplicationTests {
 
         AnimalKindType a = AnimalKindType.valueOf(name);
         System.out.println(a.getKey());
+    }
+
+    @Test
+    void dDayTest() {
+        AnimalData ad = animalDataService.findById(18361l).orElse(null);
+
+        LocalDateTime time = ad.getNoticeEnd();
+
+        Long day = ChronoUnit.DAYS.between(LocalDateTime.now(), time);
+        Integer dDay = 0;
+        //당일이거나 이미 지난 경우
+        if(day > 0) {
+            dDay = Math.toIntExact(day + 1);
+
+        }
+        System.out.println("endDate:" +time);
+        System.out.println("dDay : "+dDay);
+        time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 }
