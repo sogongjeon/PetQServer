@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service
 
 @Service
 open class CityServiceImpl(private val repository: CityRepository) : BaseServiceImpl<City>(repository), CityService{
-    override fun findByOrgCode(code : String) : City? {
-        return repository.findByOrgCode(code)
+    override fun findByCityCode(code : String) : City? {
+        return repository.findByCityCode(code)
     }
 
     override fun findByCityName(name: String): City? {

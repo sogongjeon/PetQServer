@@ -51,7 +51,7 @@ public class MainAnimalListConverter extends AbstractDataConverter<AnimalData, A
             return null;
         }
 
-        File file = new File(savePath + source.getId());
+        File file = new File(savePath + source.getId()+".jpg");
         FileItem fileItem = new DiskFileItem("file", Files.probeContentType(file.toPath()), false, file.getName(), (int) file.length() , file.getParentFile());
 
         InputStream input = new FileInputStream(file);

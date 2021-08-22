@@ -24,4 +24,8 @@ open class GuServiceImpl(private val repository : GuRepository) : BaseServiceImp
     override fun getGuInfo(guCode: String): GuInfo? {
         return repository.getGuInfo(guCode)
     }
+
+    override fun listByCityCode(cityCode: String?): List<Gu>? {
+        return repository.listByCityCode(cityCode)
+    }
 }

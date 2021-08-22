@@ -23,4 +23,7 @@ interface GuRepository : JpaRepository<Gu, Long> {
             "g.guName"+
             ") from Gu g inner join City c on c.cityCode = g.cityCode where g.guCode = ?1")
     fun getGuInfo(guCode : String) : GuInfo?
+
+    @Query("select g from Gu g where g.cityCode= ?1")
+    fun listByCityCode(cityCode : String?) : List<Gu>?
 }

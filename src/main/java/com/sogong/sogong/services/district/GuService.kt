@@ -14,4 +14,6 @@ interface GuService : BaseService<Gu> {
     fun getLastGuCode() : String
 
     fun getGuInfo(guCode : String) : GuInfo?
+
+    fun listByCityCode(cityCode : String?) : List<Gu>?
 }

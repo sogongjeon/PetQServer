@@ -17,8 +17,12 @@ import com.sogong.sogong.services.animal.AnimalKindService;
 import com.sogong.sogong.services.district.CityService;
 import com.sogong.sogong.services.district.GuService;
 import com.sogong.sogong.type.animal.AnimalKindType;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -28,14 +32,14 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -79,6 +83,9 @@ class SogongApplicationTests {
 
     @Autowired
     PublicAbandonedConfig publicAbandonedConfig;
+
+    @Value("${animalImage.savePath}")
+    private String savePath;
 
     @Test
     void contextLoads() {
@@ -298,5 +305,21 @@ class SogongApplicationTests {
         System.out.println("endDate:" +time);
         System.out.println("dDay : "+dDay);
         time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
+    @Test
+    void fileTest() throws IOException {
+        File file = new File(savePath + "234.jpg");
+        FileItem fileItem = new DiskFileItem("file", Files.probeContentType(file.toPath()), false, file.getName(), (int) file.length() , file.getParentFile());
+
+        InputStream input = new FileInputStream(file);
+        OutputStream os = fileItem.getOutputStream();
+        IOUtils.copy(input, os);
+
+        MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
+
+        System.out.println(multipartFile);
+//        return multipartFile;
+
     }
 }
