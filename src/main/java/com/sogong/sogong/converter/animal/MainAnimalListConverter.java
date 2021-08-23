@@ -30,14 +30,13 @@ import java.util.List;
 public class MainAnimalListConverter extends AbstractDataConverter<AnimalData, AnimalDataEntity> {
     private final AnimalKindService animalKindService;
     private final GuService guService;
+    private final String imagePath;
 
-    public MainAnimalListConverter(AnimalKindService animalKindService, GuService guService) {
+    public MainAnimalListConverter(String imagePath, AnimalKindService animalKindService, GuService guService) {
+        this.imagePath = imagePath;
         this.animalKindService = animalKindService;
         this.guService = guService;
     }
-
-    @Value("${animalImage.savePath}")
-    private String savePath;
 
     @Override
     protected AnimalDataEntity createTarget() {return new AnimalDataEntity();}
@@ -50,20 +49,11 @@ public class MainAnimalListConverter extends AbstractDataConverter<AnimalData, A
         if(animalKind == null){
             return null;
         }
-
-        File file = new File(savePath + source.getId()+".jpg");
-        FileItem fileItem = new DiskFileItem("file", Files.probeContentType(file.toPath()), false, file.getName(), (int) file.length() , file.getParentFile());
-
-        InputStream input = new FileInputStream(file);
-        OutputStream os = fileItem.getOutputStream();
-        IOUtils.copy(input, os);
-
-        MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
-
+        target.setImage(imagePath+source.getId());
 
         target.setId(source.getId());
         target.setType(animalKind.getType());
-        target.setImage(multipartFile);
+
         target.setKindName(source.getKindName());
 
         if(source.getNoticeEnd() != null) {

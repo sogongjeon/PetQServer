@@ -5,7 +5,7 @@ import org.springframework.web.multipart.MultipartFile
 class AnimalDataEntity {
     var id: Long ?= null
     var type : String ?= null
-    var image: MultipartFile ?= null
+    var image: String ?= null
     var kindName : String ?= null
     var dDay : String ?= null
     var place : String ?= null

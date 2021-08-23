@@ -11,9 +11,15 @@ import com.sogong.sogong.services.customer.CustomerService
 import com.sogong.sogong.services.customer.LostPetService
 import com.sogong.sogong.services.district.GuService
 import com.sogong.sogong.type.ApiResult
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.ClassPathResource
+import org.springframework.util.FileCopyUtils
 import org.springframework.web.bind.annotation.*
+import java.io.File
+import java.io.IOException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import javax.servlet.ServletContext
 
 @RestController
 @RequestMapping("/v1/customer")
@@ -21,11 +27,19 @@ class CustomerController(
         private val customerService: CustomerService,
         private val lostPetService: LostPetService,
         private val animalKindService: AnimalKindService,
-        private val guService : GuService
+        private val guService : GuService,
+        private val servletContext: ServletContext
 ) {
 
+    @Value("\${animalImage.lostAnimalSavePath}")
+    private val lostAnimalSavePath = ""
+
+    @Value("\${animalImage.getLostAnimalImagePath}")
+    private val lostAnimalImagePath = ""
+
+
     @PostMapping("/lostpet/register")
-    fun lostPetRegister(@RequestBody lostPetRequest : LostPetRequest) : ResultEntity<Boolean> {
+    fun lostPetRegister(@ModelAttribute lostPetRequest : LostPetRequest) : ResultEntity<Boolean> {
         val customer = customerService.findByIdAndEnabledTrue(lostPetRequest.customerId!!)
                 ?: return ResultEntity(ApiResult.NOT_FOUND, "회원이 존재하지 않습니다.")
 
@@ -33,7 +47,6 @@ class CustomerController(
         if(lostPet != null) {
             lostPet.customerId = lostPetRequest.customerId
             lostPet.animalKindId = lostPetRequest.animalKindId
-            lostPet.imgPath = lostPetRequest.imgPath
             lostPet.guCode = lostPetRequest.guCode
             lostPet.phoneNumber = lostPetRequest.phoneNumber
             lostPet.lostDay = LocalDate.parse(lostPetRequest.lostDay, DateTimeFormatter.ofPattern("yyyyMMdd")).atTime(0,0,0);
@@ -41,11 +54,29 @@ class CustomerController(
             lostPet.etcMemo = lostPetRequest.etcMemo
 
             lostPetService.saveOrUpdate(lostPet)
+            if(lostPetRequest.image == null) {
+                return ResultEntity("1500","이미지 없으면 안돼")
+            }
+            try {
+                var webAppRoot = servletContext.getRealPath("/")
+                var relativeFolder = "/resources/images/animal-image/"
+
+                val dest = File(webAppRoot+relativeFolder+lostPet.id+".jpg")
+
+//                FileCopyUtils.copy(file.getBytes(), new File(filename));
+                FileCopyUtils.copy(lostPetRequest.image!!.bytes, dest)
+//                lostPetRequest.image!!.transferTo(dest)
+
+                println("${dest}로 실종동물 이미지 저장완료!")
+            } catch(e : IllegalStateException ) {
+                e.printStackTrace();
+            } catch (e : IOException) {
+                e.printStackTrace();
+            }
         } else {
             val newLostPet = LostPet()
             newLostPet.customerId = lostPetRequest.customerId
             newLostPet.animalKindId = lostPetRequest.animalKindId
-            newLostPet.imgPath = lostPetRequest.imgPath
             newLostPet.guCode = lostPetRequest.guCode
             newLostPet.phoneNumber = lostPetRequest.phoneNumber
             newLostPet.lostDay = LocalDate.parse(lostPetRequest.lostDay, DateTimeFormatter.ofPattern("yyyyMMdd")).atTime(0, 0, 0);
@@ -53,6 +84,25 @@ class CustomerController(
             newLostPet.etcMemo = lostPetRequest.etcMemo
 
             lostPetService.saveOrUpdate(newLostPet)
+
+            try {
+                var webAppRoot = servletContext.getRealPath("/")
+                var relativeFolder = "/resources/images/animal-image/"
+
+                val dest = File(webAppRoot+relativeFolder+newLostPet.id+".jpg")
+
+//                if (!dest.exists()) {
+//                    //디렉토리 생성 메서드
+//                    dest.mkdirs()
+//                }
+//                lostPetRequest.image!!.transferTo(dest)
+                FileCopyUtils.copy(lostPetRequest.image!!.bytes, dest)
+                println("${dest}로 실종동물 이미지 저장완료!")
+            } catch(e : IllegalStateException ) {
+                e.printStackTrace();
+            } catch (e : IOException) {
+                e.printStackTrace();
+            }
         }
 
         return ResultEntity(true)
@@ -87,7 +137,7 @@ class CustomerController(
         var petInfo = LostPetInfo()
         petInfo.id = lostPet.id
         petInfo.lostDay = lostPet.lostDay.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        petInfo.imgPath = lostPet.imgPath
+        petInfo.imgPath = lostAnimalImagePath+lostPet.id
         petInfo.animalKind = animalKind.type
         petInfo.animalKindDetail = animalKind.kindName
         petInfo.city = guInfo!!.city + " " + guInfo.gu
