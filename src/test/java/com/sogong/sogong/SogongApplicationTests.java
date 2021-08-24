@@ -19,11 +19,13 @@ import com.sogong.sogong.services.district.GuService;
 import com.sogong.sogong.type.animal.AnimalKindType;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.io.FileUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -53,6 +55,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -309,17 +312,31 @@ class SogongApplicationTests {
 
     @Test
     void fileTest() throws IOException {
-        File file = new File(savePath + "234.jpg");
-        FileItem fileItem = new DiskFileItem("file", Files.probeContentType(file.toPath()), false, file.getName(), (int) file.length() , file.getParentFile());
-
-        InputStream input = new FileInputStream(file);
-        OutputStream os = fileItem.getOutputStream();
-        IOUtils.copy(input, os);
-
-        MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
-
-        System.out.println(multipartFile);
+//        File file = new File(savePath + "234.jpg");
+//        FileItem fileItem = new DiskFileItem("file", Files.probeContentType(file.toPath()), false, file.getName(), (int) file.length() , file.getParentFile());
+//
+//        InputStream input = new FileInputStream(file);
+//        OutputStream os = fileItem.getOutputStream();
+//        IOUtils.copy(input, os);
+//
+//        MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
+//
+//        System.out.println(multipartFile);
 //        return multipartFile;
+
+//        ClassPathResource resource = new ClassPathResource("/Users/dajung/images/animal-image/3429.jpg");
+//
+//        ClassLoader classLoader = getClass().getClassLoader();
+//        File inputFile = new File(classLoader
+//                .getResource("")
+//                .getFile());
+//
+//        byte[] fileContent = FileUtils.readFileToByteArray(inputFile);
+//        String encodedString = Base64
+//                .getEncoder()
+//                .encodeToString(fileContent);
+//
+//        System.out.println("encodedSTring:"+encodedString);
 
     }
 }

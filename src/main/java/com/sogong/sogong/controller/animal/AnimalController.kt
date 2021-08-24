@@ -1,22 +1,19 @@
 package com.sogong.sogong.controller.animal
 
-//import com.sogong.sogong.entity.animal.AnimalKindDetailDto
-//import com.sogong.sogong.entity.animal.AnimalKindDetailDto
 
-//import org.apache.tomcat.util.http.fileupload.IOUtils
-//import jdk.jpackage.internal.IOUtils
-//import org.apache.commons.io.IOUtils.toByteArray
-
+import com.sogong.sogong.converter.animal.MainAnimalDetailConverter
 import com.sogong.sogong.converter.animal.MainAnimalListConverter
+import com.sogong.sogong.converter.customer.CommentConverter
 import com.sogong.sogong.entity.EntityList
 import com.sogong.sogong.entity.ResultEntity
-import com.sogong.sogong.entity.animal.AnimalDataEntity
-import com.sogong.sogong.entity.animal.AnimalKindDetailDto
-import com.sogong.sogong.entity.animal.AnimalSearchCriteria
-import com.sogong.sogong.entity.animal.RegisterAnimalRequest
+import com.sogong.sogong.entity.animal.*
+import com.sogong.sogong.entity.customer.CommentEntity
 import com.sogong.sogong.model.animal.AnimalData
+import com.sogong.sogong.model.customer.Comment
 import com.sogong.sogong.services.animal.AnimalDataService
 import com.sogong.sogong.services.animal.AnimalKindService
+import com.sogong.sogong.services.customer.CommentService
+import com.sogong.sogong.services.customer.CustomerService
 import com.sogong.sogong.services.district.GuService
 import com.sogong.sogong.type.animal.AnimalKindType
 import com.sogong.sogong.type.animal.ProtectType
@@ -41,7 +38,8 @@ class AnimalController(
         private val restTemplate: RestTemplate,
         private val animalKindService: AnimalKindService,
         private val guService : GuService,
-        private val servletContext : ServletContext
+        private val commentService : CommentService,
+        private val customerService : CustomerService
 ) {
     private val log: Logger = LoggerFactory.getLogger(AnimalController::class.java)
 
@@ -50,6 +48,9 @@ class AnimalController(
 
     @Value("\${animalImage.getImagePath}")
     private val imagePath = ""
+
+    @Value("\${profileImage.savePath}")
+    private val profilePath = ""
 
 
     @GetMapping("/list")
@@ -64,6 +65,34 @@ class AnimalController(
         animalResult.elements = animalPage.stream()
                 .map(converter::convert)
                 .toList()
+
+        return ResultEntity(animalResult)
+    }
+
+    @GetMapping("/{id}")
+    fun animalDetail(@PathVariable id : String) : ResultEntity<AnimalDetailEntity> {
+
+        var animalData = animalDataService.findById(id.toLong()).orElse(null)
+
+        if(animalData == null) {
+            return ResultEntity("1500","해당 동물을 조회할 수 없습니다.")
+        }
+
+        var converter = MainAnimalDetailConverter(imagePath, animalKindService, guService)
+
+        var animalResult = converter.convert(animalData)
+
+        var comments = commentService.findByTypeAndId("ANIMAL_DATA", id.toLong());
+        val commentResult = EntityList<CommentEntity>()
+
+        var commentConverter = CommentConverter(profilePath, customerService)
+
+        commentResult.totalCount = comments.size.toLong()
+        commentResult.elements = comments.stream()
+                .map(commentConverter::convert)
+                .toList()
+
+        animalResult.comments = commentResult
 
         return ResultEntity(animalResult)
     }
@@ -137,18 +166,6 @@ class AnimalController(
         return ResultEntity(true)
     }
 
-
-    //    @Autowired
-    //    ServletContext servletContext;
-//    @GetMapping(value = ["/image"], produces = [MediaType.IMAGE_JPEG_VALUE])
-//    @ResponseBody
-//    @Throws(IOException::class)
-//    fun getImageWithMediaType(): ByteArray? {
-//        println("savePath : $savePath")
-//        val a = savePath + "4562.jpg"
-//        val `in` = servletContext.getResourceAsStream(a)
-//        return toByteArray(`in`)
-//    }
 
 
 }

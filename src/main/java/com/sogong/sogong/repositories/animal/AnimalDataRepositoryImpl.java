@@ -33,7 +33,7 @@ public class AnimalDataRepositoryImpl implements AnimalDataRepositoryCustom{
         countBuilderWhere.append(whereQuery);
         objectBuilderWhere.append(whereQuery);
 
-        String query = " ORDER BY ad.id desc";
+        String query = " ORDER BY ad.createdAt desc";
         objectBuilderWhere.append(query);
 
         Query countQ = entityManager.createQuery(
@@ -43,9 +43,8 @@ public class AnimalDataRepositoryImpl implements AnimalDataRepositoryCustom{
         Query objectQ = entityManager.createQuery(
                 baseQuery + objectBuilderWhere.toString());
 
-        Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize());
         Number totalCount = (Number) countQ.getSingleResult();
-
+        Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize() > 0 ? criteria.getSize() : totalCount.intValue());
         if (totalCount.intValue() == 0) {
             return new PageImpl<>(Collections.emptyList(), pageable, totalCount.longValue());
         }
@@ -57,9 +56,29 @@ public class AnimalDataRepositoryImpl implements AnimalDataRepositoryCustom{
             } else {
                 objectQ.setMaxResults(totalCount.intValue());
             }
+        }else if(criteria.getSize() == 0){
+            objectQ.setMaxResults(totalCount.intValue());
         }
 
+        //noinspection unchecked
         return new PageImpl<>(objectQ.getResultList(), pageable, totalCount.longValue());
+//        Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize());
+//        Number totalCount = (Number) countQ.getSingleResult();
+//
+//        if (totalCount.intValue() == 0) {
+//            return new PageImpl<>(Collections.emptyList(), pageable, totalCount.longValue());
+//        }
+//
+//        objectQ.setFirstResult((int) pageable.getOffset());
+//        if (criteria.getSize() > 0) {
+//            if (criteria.getSize() < totalCount.intValue()) {
+//                objectQ.setMaxResults(criteria.getSize());
+//            } else {
+//                objectQ.setMaxResults(totalCount.intValue());
+//            }
+//        }
+//
+//        return new PageImpl<>(objectQ.getResultList(), pageable, totalCount.longValue());
     }
 
     @Override
@@ -132,8 +151,10 @@ public class AnimalDataRepositoryImpl implements AnimalDataRepositoryCustom{
             objectBuilderWhere.append(namedQuery);
         }
 
-        String query = " ORDER BY ad.id desc";
-        objectBuilderWhere.append(query);
+        String orderByQuery = "";
+
+        orderByQuery = " ORDER BY ad.createdAt desc";
+        objectBuilderWhere.append(orderByQuery);
 
         Query countQ = entityManager.createQuery(
                 baseCountQuery + countBuilderWhere.toString());
@@ -180,9 +201,8 @@ public class AnimalDataRepositoryImpl implements AnimalDataRepositoryCustom{
             countQ.setParameter("searchPeriodTo", criteria.getSearchPeriodTo());
         }
 
-        Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize());
         Number totalCount = (Number) countQ.getSingleResult();
-
+        Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize() > 0 ? criteria.getSize() : totalCount.intValue());
         if (totalCount.intValue() == 0) {
             return new PageImpl<>(Collections.emptyList(), pageable, totalCount.longValue());
         }
@@ -194,8 +214,11 @@ public class AnimalDataRepositoryImpl implements AnimalDataRepositoryCustom{
             } else {
                 objectQ.setMaxResults(totalCount.intValue());
             }
+        }else if(criteria.getSize() == 0){
+            objectQ.setMaxResults(totalCount.intValue());
         }
 
+        //noinspection unchecked
         return new PageImpl<>(objectQ.getResultList(), pageable, totalCount.longValue());
     }
 }
