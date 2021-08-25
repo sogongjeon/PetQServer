@@ -25,7 +25,7 @@ public class AnimalKindRepositoryImpl implements AnimalKindRepositoryCustom {
 
         StringBuilder countBuilderWhere = new StringBuilder();
         StringBuilder objectBuilderWhere = new StringBuilder();
-        String whereQuery = " where 0 = 0 ";
+        String whereQuery = " where 0 = 0 and enabled = 'Y' ";
         countBuilderWhere.append(whereQuery);
         objectBuilderWhere.append(whereQuery);
 

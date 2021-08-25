@@ -4,6 +4,7 @@ import com.animal.animal.entity.external.FindAbandonedResponse
 import com.sogong.sogong.config.PublicAbandonedConfig
 import com.sogong.sogong.controller.external.PublicAbandonedAnimalController
 import com.sogong.sogong.model.animal.AnimalData
+import com.sogong.sogong.model.animal.AnimalKind
 import com.sogong.sogong.model.district.Gu
 import com.sogong.sogong.services.animal.AnimalDataService
 import com.sogong.sogong.services.animal.AnimalKindService
@@ -94,6 +95,22 @@ class PublicUpdateAnimalJob (
 
                                 } else {
                                     //2. 기존 DB에 없던 동물일 경우
+
+                                    //21.08.25 추가 (일부 종 통합)
+                                    var newKindCode : String ?= null
+
+                                    if(animalKind.kindCode.equals("000197")) {
+                                        newKindCode = "00214"
+                                    } else if (animalKind.kindCode.equals("000108")) {
+                                        newKindCode = "000205"
+                                    } else if (animalKind.kindCode.equals("000007")) {
+                                        newKindCode = "000146"
+                                    } else if (animalKind.kindCode.equals("000062")) {
+                                        newKindCode = "000124"
+                                    } else if (animalKind.kindCode.equals("000060")) {
+                                        newKindCode = "000056"
+                                    }
+
                                     var newAnimalData = AnimalData()
 
                                     var address = item.careAddr!!
@@ -116,7 +133,7 @@ class PublicUpdateAnimalJob (
                                     }
 
                                     newAnimalData.guCode = guData!!.guCode
-                                    newAnimalData.animalKindCode = animalKind.kindCode
+                                    newAnimalData.animalKindCode = newKindCode ?: animalKind.kindCode
                                     newAnimalData.desertionNo = item.desertionNo
                                     newAnimalData.happenedDate = LocalDate.parse(item.happenDt, DateTimeFormatter.ofPattern("yyyyMMdd")).atTime(0,0,0)
                                     newAnimalData.happenedPlace = item.happenPlace

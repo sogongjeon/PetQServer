@@ -18,6 +18,9 @@ public class AnimalKind extends AuditableEntity {
     @Column
     private String kindName;
 
+    @Column(length = 1)
+    private Boolean enabled = true;
+
 
     public String getType() {
         return type;
@@ -41,5 +44,13 @@ public class AnimalKind extends AuditableEntity {
 
     public void setKindName(String kindName) {
         this.kindName = kindName;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 }

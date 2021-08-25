@@ -148,7 +148,7 @@ class AnimalController(
 
         //이미지 집어넣긔
         if(request.image == null) {
-            return ResultEntity("1500", "이미지가 없을수가 없다.")
+            return ResultEntity("1500", "이미지가 반드시 필요합니다.")
         }
 
         try {
