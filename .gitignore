@@ -1,5 +1,5 @@
 *.sh
-.properties
+*.properties
 
 HELP.md
 target/
